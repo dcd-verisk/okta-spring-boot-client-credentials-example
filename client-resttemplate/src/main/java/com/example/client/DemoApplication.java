@@ -17,6 +17,8 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
+
 @Configuration
 @SpringBootApplication
 public class DemoApplication implements CommandLineRunner {
@@ -25,7 +27,6 @@ public class DemoApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
-
 	}
 
 	// Inject the OAuth authorized client service and authorized client manager
@@ -43,15 +44,15 @@ public class DemoApplication implements CommandLineRunner {
 
 		// Build an OAuth2 request for the Okta provider
 		OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId("okta")
-				.principal("Demo Service")
-				.build();
+			.principal("Demo Service")
+			.build();
 
 		// Perform the actual authorization request using the authorized client service and authorized client
 		// manager. This is where the JWT is retrieved from the Okta servers.
 		OAuth2AuthorizedClient authorizedClient = this.authorizedClientServiceAndManager.authorize(authorizeRequest);
 
 		// Get the token from the authorized client object
-		OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
+		OAuth2AccessToken accessToken = Objects.requireNonNull(authorizedClient).getAccessToken();
 
 		logger.info("Issued: " + accessToken.getIssuedAt().toString() + ", Expires:" + accessToken.getExpiresAt().toString());
 		logger.info("Scopes: " + accessToken.getScopes().toString());
@@ -64,15 +65,15 @@ public class DemoApplication implements CommandLineRunner {
 		// Add the JWT to the RestTemplate headers
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", "Bearer " + accessToken.getTokenValue());
-		HttpEntity request = new HttpEntity(headers);
+		var request = new HttpEntity(headers);
 
 		// Make the actual HTTP GET request
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> response = restTemplate.exchange(
-				"http://localhost:8081",
-				HttpMethod.GET,
-				request,
-				String.class
+			"http://localhost:8081",
+			HttpMethod.GET,
+			request,
+			String.class
 		);
 
 		String result = response.getBody();
