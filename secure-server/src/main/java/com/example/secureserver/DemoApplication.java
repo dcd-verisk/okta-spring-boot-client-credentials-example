@@ -15,30 +15,27 @@ import java.security.Principal;
 @SpringBootApplication
 public class DemoApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(DemoApplication.class, args);
+	}
 
-    @EnableGlobalMethodSecurity(prePostEnabled = true)
-    public static class SecurityConfig extends WebSecurityConfigurerAdapter {
-        protected void configure(final HttpSecurity http) throws Exception {
-            http.authorizeRequests()
-                    .anyRequest().authenticated()
-                    .and()
-                    .oauth2ResourceServer().jwt(); // replace .jwt() with .opaqueToken() for Opaque Token case
+	@EnableGlobalMethodSecurity(prePostEnabled = true)
+	public static class SecurityConfig extends WebSecurityConfigurerAdapter {
+		protected void configure(final HttpSecurity http) throws Exception {
+			http.authorizeRequests()
+				.anyRequest().authenticated()
+				.and()
+				.oauth2ResourceServer().jwt();
+		}
+	}
 
-            // Send a 401 message to the browser (w/o this, you'll see a blank page)
-            Okta.configureResourceServer401ResponseBody(http);
-        }
-    }
-
-    @RestController
-    public class RequestCotroller {
-        @PreAuthorize("hasAuthority('SCOPE_mod_custom')")
-        @GetMapping("/")
-        public String getMessage(Principal principal) {
-            return "Welcome, " + principal.getName();
-        }
-    }
+	@RestController
+	public class RequestCotroller {
+		@PreAuthorize("hasAuthority('SCOPE_mod_custom')")
+		@GetMapping("/")
+		public String getMessage(Principal principal) {
+			return "Welcome, " + principal.getName();
+		}
+	}
 
 }

@@ -20,7 +20,6 @@ public class DemoApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
-
 	}
 
 	@Autowired
@@ -29,21 +28,21 @@ public class DemoApplication implements CommandLineRunner {
 	@Scheduled(fixedRate = 5000)
 	public void scheduledRequest() {
 		webClient.get()
-				.uri("http://localhost:8081")
-				.retrieve()
-				.bodyToMono(String.class)
-				.map(string
-						-> "Schedule request response: " + string)
-				.subscribe(logger::info);
+			.uri("http://localhost:8081")
+			.retrieve()
+			.bodyToMono(String.class)
+			.map(string
+				-> "Schedule request response: " + string)
+			.subscribe(logger::info);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
 		String body = webClient.get()
-				.uri("http://localhost:8081")
-				.retrieve()
-				.bodyToMono(String.class)
-				.block();
+			.uri("http://localhost:8081")
+			.retrieve()
+			.bodyToMono(String.class)
+			.block();
 		logger.info(body);
 	}
 }
