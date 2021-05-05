@@ -2,7 +2,7 @@
  
 This example app shows how to implement the client credentials grant with Spring Boot and Spring Security 5.
 
-Please read [OAuth 2.0 Client Credential With Spring Boot](https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security) to see how this app was created.
+Please read [How to Use Client Credentials Flow with Spring Security](https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security) to see how this app was created.
 
 **Prerequisites:** HTTPie, [Java 11](https://adoptopenjdk.net/) and an [Okta Developer Account](https://developer.okta.com).
 
