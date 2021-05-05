@@ -1,16 +1,12 @@
-# OAuth 2.0 Client Credential With Spring Boot
+# OAuth 2.0 Client Credentials With Spring Security
  
-This example app shows how to implement the client credentials grant with Spring Boot and Spring Security 5
+This example app shows how to implement the client credentials grant with Spring Boot and Spring Security 5.
 
-Please read [OAuth 2.0 Client Credential With Spring Boot](https://developer.okta.com/blog/<need a link>) to see how this app was created.
+Please read [OAuth 2.0 Client Credential With Spring Boot](https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security) to see how this app was created.
 
 **Prerequisites:** HTTPie, [Java 11](https://adoptopenjdk.net/) and an [Okta Developer Account](https://developer.okta.com).
 
 > [Okta](https://developer.okta.com/) has Authentication and User Management APIs that reduce development time with instant-on, scalable user infrastructure. Okta's intuitive API and expert support make it easy for developers to authenticate, manage, and secure users and roles in any application.
-
-> Java 11: This project uses Java 12. OpenJDK 12 will work just as well. Instructions are found on the [OpenJDK website](https://openjdk.java.net/install/). OpenJDK can also be installed using [Homebrew](https://brew.sh/). Alternatively, [SDKMAN](https://sdkman.io/) is another great option for installing and managing Java versions.
-
-> HTTPie: This is a powerful command-line HTTP request utility that you'll use to test the WebFlux server. Install it according to [the docs on their site](https://httpie.org/doc#installation).
 
 * [Getting Started](#getting-started)
 * [Links](#links)
@@ -20,6 +16,7 @@ Please read [OAuth 2.0 Client Credential With Spring Boot](https://developer.okt
 ## Getting Started
 
 The repository contains three sub-projects:
+
 - `/secure-server` - a simple test server
 - `/client-webclient` - a client built using the new WebClient
 - `/client-resttemplate` - a client build using the deprecated RestTemplate
@@ -69,7 +66,7 @@ This example uses the following open source libraries:
 
 ## Help
 
-Please post any questions as comments on the [blog post](https://developer.okta.com/blog/2018/07/24/social-spring-boot), or visit our [Okta Developer Forums](https://devforum.okta.com/). 
+Please post any questions as comments on the [blog post](https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security), or visit our [Okta Developer Forums](https://devforum.okta.com/). 
 
 ## License
 
