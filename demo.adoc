@@ -9,7 +9,7 @@ In this demo, I'll show how to use Spring Boot and Spring Security to implement 
 The OAuth 2.0 docs describe the client credentials grant as:
 
 ====
-The Client Credentials grant type is used by clients to obtain an access token outside of the context of a user. This is typically used by clients to access resources about themselves rather than to access a user’s resources.
+The Client Credentials grant type is used by clients to obtain an access token outside of the context of a user. This is typically used by clients to access resources about themselves rather than to access a user's resources.
 ====
 
 Read the https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security[blog post] if you want to learn more about the client credentials grant or Spring Security 5 core classes.
@@ -121,13 +121,13 @@ spring.security.oauth2.client.provider.okta.token-uri=https://{yourOktaDomain}/o
 spring.main.web-application-type=none
 ----
 +
-TIP: The last property, `spring.main.web-application-type=none`, tells Spring Boot not to launch any kind of web service. Since this is a command-line app, there’s no reason to launch the default Tomcat container.
+TIP: The last property, `spring.main.web-application-type=none`, tells Spring Boot not to launch any kind of web service. Since this is a command-line app, there's no reason to launch the default Tomcat container.
 
 . Try it out! Run `./mvnw spring-boot:run` for the server, then run the client in a separate shell with the same command.
 
 == Create a WebClient-Based Application
 
-In this section, you’re going to implement a command-line client using the newer, currently recommended WebClient API. WebClient is part of Spring’s WebFlux package.
+In this section, you're going to implement a command-line client using the newer, currently recommended WebClient API. WebClient is part of Spring's WebFlux package.
 
 In this client, you will use two different methods to run tasks. First, you will use the `CommandLineRunner` interface, just as you did above. This will demonstrate using `WebClient` in a blocking context. Second, you will use `WebClient` to make requests using the `@Scheduled` annotation. This annotation allows for a variety of scheduling options, including CRON-style scheduling. It also allows the use of WebClient in all its non-blocking glory.
 
