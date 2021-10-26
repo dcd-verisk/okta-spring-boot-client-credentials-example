@@ -42,13 +42,23 @@ curl https://start.spring.io/starter.tgz \
   -d bootVersion=2.5.6 \
   -d artifactId=secure-server \
   -d dependencies=oauth2-resource-server,web,security,okta \
-  -d language=java \
-  -d type=maven-project \
   -d baseDir=secure-server \
 | tar -xzvf - && cd secure-server
 ----
++
+You can also use HTTPie:
++
+[source,shell]
+----
+https start.spring.io/starter.zip \
+  bootVersion==2.5.6 \
+  artifactId==secure-server \
+  dependencies==oauth2-resource-server,web,security,okta \
+  baseDir==secure-server \
+| tar -xzvf - && cd secure-server
+----
 
-. Open the `DemoApplication` class file, configure Spring Security, and add a RestController. [`cc-security`, `cc-welcome`] //todo: Fix spelling of controller in post
+. Open the `DemoApplication` class file, configure Spring Security, and add a RestController. [`cc-security`, `cc-welcome`]
 
 == Create an OIDC Application
 
@@ -77,7 +87,7 @@ curl https://start.spring.io/starter.tgz \
 
 == Add a Custom Scope to Your Authorization Server
 
-Because we are using the custom scope `mod_custom` in the `@Preauthorize` annotation, you need to add this custom scope to your Okta authorization server.
+Because we are using the custom scope `mod_custom` in the `@PreAuthorize` annotation, you need to add this custom scope to your Okta authorization server.
 
 . Run `okta login` and open the resulting URL in your browser. Sign in to the Okta Admin Console.
 
@@ -105,9 +115,9 @@ curl https://start.spring.io/starter.tgz \
 | tar -xzvf - && cd client-resttemplate
 ----
 
-. Open the project in your IDE and a new `OAuthClientConfiguration` class to hold the OAuth configuration. [`cc-client`]
+. Open the project in your IDE and create a new `OAuthClientConfiguration` class to hold the OAuth configuration. [`cc-rest-config`]
 
-. Update `DemoApplication` to implement `CommandLineRunner`. [`cc-cli`]
+. Update `DemoApplication` to implement `CommandLineRunner`. [`cc-rest-cli`]
 
 . Modify `application.properties` and use the values from the secure server project.
 +
@@ -145,15 +155,13 @@ curl https://start.spring.io/starter.tgz \
 | tar -xzvf - && cd client-webclient
 ----
 
-. Add a new `OAuthClientConfiguration` class. [`cc-webclient`]
+. Add a new `OAuthClientConfiguration` class. [`cc-web-config`]
 
-. Update `DemoApplication` to implement `CommandLineRunner` and use `WebClient` with the two different methods. [`cc-webcli`]
+. Update `DemoApplication` to implement `CommandLineRunner` and use `WebClient` with the two different methods. [`cc-web-cli`]
 
 . Copy the values from the `application.properties` file from the previous project to this project.
 
-. Start the WebClient-based client with `./mvnw spring-boot:run`.
-+
-You should see welcome messages in your logs.
+. Start the WebClient-based client with `./mvnw spring-boot:run`. You'll see welcome messages in your logs, every five seconds.
 
 You can tell by the relative simplicity of this implementation over the `RestTemplate` implementation that Spring is moving in this direction. `RestTemplate`, while still widely used, is now deprecated.
 

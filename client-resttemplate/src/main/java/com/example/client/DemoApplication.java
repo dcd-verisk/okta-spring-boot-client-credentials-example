@@ -34,7 +34,7 @@ public class DemoApplication implements CommandLineRunner {
 	@Autowired
 	private AuthorizedClientServiceOAuth2AuthorizedClientManager authorizedClientServiceAndManager;
 
-	// OUr command line runner method, runs once application is fully started
+	// The command line runner method, runs once application is fully started
 	@Override
 	public void run(String... args) throws Exception {
 
