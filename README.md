@@ -29,12 +29,26 @@ Navigate a shell to the `/secure-server` sub-project. Run `okta apps create`. Se
 
 The `secure-server/src/main/resources/application.properties` should look like the following (with you own values for the issuer, client ID, and client secret.
 ```properties
-okta.oauth2.issuer=https\://{yourOktaUri}/oauth2/default
-okta.oauth2.client-secret=<yourClientSecret>
-okta.oauth2.client-id={yourclientID}
+okta.oauth2.issuer=https\://{yourOktaDomain}/oauth2/default
+okta.oauth2.client-id={yourClientID}
+okta.oauth2.client-secret={yourClientSecret}
 ```
 
-Start the server. From the `secure-server` directory.
+### Add a Custom Scope to Your Authorization Server
+
+Because the custom scope `mod_custom` is used in a `@Preauthorize` annotation, you need to add this custom scope to your Okta authorization server. Run `okta login` and open the resulting URL in your browser. Sign in to the Okta Admin Console. You may need to click the **Admin** button to get to your dashboard.
+
+Go to **Security** > **API**. Select the **Default** authorization server by clicking on **default** in the table.
+
+Select the **Scopes** tab. Click **Add Scope**.
+
+Give the scope the following **Name**: `mod_custom`.
+
+Give the scope whatever **Display Name** and **Description** you would like, or leave it blank. Click **Create** to continue.
+
+### Test Client Credentials with Spring Boot
+
+Start the server from the `secure-server` directory.
 ```bash
 ./mvnw spring-boot:run
 ```
