@@ -1,0 +1,174 @@
+:experimental:
+:commandkey: &#8984;
+:toc: macro
+
+= Client Credentials Flow with Spring Security Demo Steps
+
+In this demo, I'll show how to use Spring Boot and Spring Security to implement a client credentials OAuth flow. The client credentials grant is used when two servers need to communicate with each other outside the context of a user.
+
+The OAuth 2.0 docs describe the client credentials grant as:
+
+====
+The Client Credentials grant type is used by clients to obtain an access token outside of the context of a user. This is typically used by clients to access resources about themselves rather than to access a user's resources.
+====
+
+Read the https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security[blog post] if you want to learn more about the client credentials grant or Spring Security 5 core classes.
+
+TIP: The brackets at the end of some steps indicate the IntelliJ Live Templates to use. You can find the template definitions at https://github.com/mraible/idea-live-templates[mraible/idea-live-templates].
+
+toc::[]
+
+== Install Prerequisites
+
+. Use SDKMAN to install Java 11:
+
+  sdk install java
+
+. https://httpie.io/docs#installation[Install HTTPie]:
+
+  brew install httpie
+
+. https://cli.okta.com/manual/#installation[Install] the Okta CLI:
+
+  brew install --cask oktadeveloper/tap/okta
+
+== Build a Secure OAuth 2.0 Resource Server with Spring Security
+
+. Run the command below to retrieve the pre-configured starter project for the server using the Spring Initializr REST API.
++
+[source,shell]
+----
+curl https://start.spring.io/starter.tgz \
+  -d bootVersion=2.5.6 \
+  -d artifactId=secure-server \
+  -d dependencies=oauth2-resource-server,web,security,okta \
+  -d baseDir=secure-server \
+| tar -xzvf - && cd secure-server
+----
++
+You can also use HTTPie:
++
+[source,shell]
+----
+https start.spring.io/starter.zip \
+  bootVersion==2.5.6 \
+  artifactId==secure-server \
+  dependencies==oauth2-resource-server,web,security,okta \
+  baseDir==secure-server \
+| tar -xzvf - && cd secure-server
+----
+
+. Open the `DemoApplication` class file, configure Spring Security, and add a RestController. [`cc-security`, `cc-welcome`]
+
+== Create an OIDC Application
+
+. Use the Okta CLI to create a new service OIDC application.
+
+  okta apps create service
+
+. Copy the values from the generated `.okta.env` file into `src/main/resources/application.properties`.
+
+  okta.oauth2.issuer=https://dev-123456.okta.com/oauth2/default
+  okta.oauth2.client-id=0oa7km6o1AEDdbuUq4x7
+  okta.oauth2.client-secret=292yu98y2983e28ue928u39e82ue982ue982
+  server.port=8081
+
+== Test Your Secure Server
+
+. You now have a fully functioning server application. Run it:
+
+  ./mvnw spring-boot:run
+
+. Once that finishes starting, you can run a request using HTTPie.
+
+  http :8081/secure
+
+. You'll get a 401 because a valid JWT is required.
+
+== Add a Custom Scope to Your Authorization Server
+
+Because we are using the custom scope `mod_custom` in the `@PreAuthorize` annotation, you need to add this custom scope to your Okta authorization server.
+
+. Run `okta login` and open the resulting URL in your browser. Sign in to the Okta Admin Console.
+
+. Go to *Security* > *API*. Select the *default* authorization server.
+
+. Select the *Scopes* tab. Click *Add Scope*.
+
+. Name the scope `mod_custom` and click *Create* to continue.
+
+== Create a RestTemplate Command-Line Application
+
+Next, you will create a command-line application that makes an authorized request to the secure server using `RestTemplate`.
+
+. Use https://start.spring.io[start.spring.io] to download a bootstrapped application with the following command.
++
+[source,shell]
+----
+curl https://start.spring.io/starter.tgz \
+  -d bootVersion=2.5.6 \
+  -d artifactId=client \
+  -d dependencies=oauth2-client,web \
+  -d language=java \
+  -d type=maven-project \
+  -d baseDir=client-resttemplate \
+| tar -xzvf - && cd client-resttemplate
+----
+
+. Open the project in your IDE and create a new `OAuthClientConfiguration` class to hold the OAuth configuration. [`cc-rest-config`]
+
+. Update `DemoApplication` to implement `CommandLineRunner`. [`cc-rest-cli`]
+
+. Modify `application.properties` and use the values from the secure server project.
++
+[source,properties]
+----
+spring.security.oauth2.client.registration.okta.client-id={yourClientId}
+spring.security.oauth2.client.registration.okta.client-secret={yourClientSecret}
+spring.security.oauth2.client.registration.okta.authorization-grant-type=client_credentials
+spring.security.oauth2.client.registration.okta.scope=mod_custom
+spring.security.oauth2.client.provider.okta.token-uri=https://{yourOktaDomain}/oauth2/default/v1/token
+spring.main.web-application-type=none
+----
++
+TIP: The last property, `spring.main.web-application-type=none`, tells Spring Boot not to launch any kind of web service. Since this is a command-line app, there's no reason to launch the default Tomcat container.
+
+. Try it out! Run `./mvnw spring-boot:run` for the server, then run the client in a separate shell with the same command.
+
+== Create a WebClient-Based Application
+
+In this section, you're going to implement a command-line client using the newer, currently recommended WebClient API. WebClient is part of Spring's WebFlux package.
+
+In this client, you will use two different methods to run tasks. First, you will use the `CommandLineRunner` interface, just as you did above. This will demonstrate using `WebClient` in a blocking context. Second, you will use `WebClient` to make requests using the `@Scheduled` annotation. This annotation allows for a variety of scheduling options, including CRON-style scheduling. It also allows the use of WebClient in all its non-blocking glory.
+
+. Create a new WebClient project.
++
+[source,shell]
+----
+curl https://start.spring.io/starter.tgz \
+  -d bootVersion=2.5.6 \
+  -d artifactId=client \
+  -d dependencies=oauth2-client,web,webflux \
+  -d language=java \
+  -d type=maven-project \
+  -d baseDir=client-webclient \
+| tar -xzvf - && cd client-webclient
+----
+
+. Add a new `OAuthClientConfiguration` class. [`cc-web-config`]
+
+. Update `DemoApplication` to implement `CommandLineRunner` and use `WebClient` with the two different methods. [`cc-web-cli`]
+
+. Copy the values from the `application.properties` file from the previous project to this project.
+
+. Start the WebClient-based client with `./mvnw spring-boot:run`. You'll see welcome messages in your logs, every five seconds.
+
+You can tell by the relative simplicity of this implementation over the `RestTemplate` implementation that Spring is moving in this direction. `RestTemplate`, while still widely used, is now deprecated.
+
+== The Client Credentials Flow is pretty slick!
+
+👩‍💻 Find the code on GitHub: https://github.com/oktadev/okta-spring-boot-client-credentials-example[@oktadev/okta-spring-boot-client-credentials-example]
+
+📙 Read the blog post: https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security[How to Use Client Credentials Flow with Spring Security]
+
+
