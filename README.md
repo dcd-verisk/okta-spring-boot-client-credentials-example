@@ -21,7 +21,7 @@ The repository contains three sub-projects:
 - `/client-webclient` - a client built using the new WebClient
 - `/client-resttemplate` - a client build using the deprecated RestTemplate
 
-To run the sample app, the first step is to cofigure an Okta OIDC app for all three of the projects. Then, you can run the simple server (which has one endpoint at root). With the server running, you can run either or both of the clients. The clients demonstrate how to use the client credentials grant with Spring's WebClient and RestTemplate in Spring Security 5.
+To run the sample app, the first step is to configure an Okta OIDC app for all three of the projects. Then, you can run the simple server (which has one endpoint at root). With the server running, you can run either or both of the clients. The clients demonstrate how to use the client credentials grant with Spring's WebClient and RestTemplate in Spring Security 5.
 
 Before you begin, you’ll need a free Okta developer account. Install the [Okta CLI](https://cli.okta.com) and run `okta register` to sign up for a new account. If you already have an account, run `okta login`. 
 
