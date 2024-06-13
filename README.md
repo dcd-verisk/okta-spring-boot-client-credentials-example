@@ -1,4 +1,12 @@
-# OAuth 2.0 Client Credentials With Spring Security
+# Sample Spring Boot OAuth 2.0 Client Credentials Examples with Integrations with Claimx and Okta
+
+Below are the instructions to run the sample Spring Boot OAuth 2.0 Client Credentials Examples with Integrations with Claimx and Okta.
+This project is a copy of the original project [okta-spring-boot-client-credentials-example](https://github.com/oktadev/okta-spring-boot-client-credentials-example)
+
+The main aim of this project is
+to demonstrate the integration of Claimxperience with Okta as the source of authentication for Webhooks using OAuth 2.0 Client Credentials.
+
+## OAuth 2.0 Client Credentials With Spring Security
  
 This example app shows how to implement the client credentials grant with Spring Boot and Spring Security 5.
 
@@ -13,7 +21,7 @@ Please read [How to Use Client Credentials Flow with Spring Security](https://de
 * [Help](#help)
 * [License](#license)
 
-## Getting Started
+### Getting Started
 
 The repository contains three sub-projects:
 
@@ -69,7 +77,6 @@ Open a shell and navigate to either of the client sub-project directories. Run t
 ```bash
 ./mvnw spring-boot:run
 ```
-
 ## Links
 
 This example uses the following open source libraries:
@@ -80,8 +87,59 @@ This example uses the following open source libraries:
 
 ## Help
 
-Please post any questions as comments on the [blog post](https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security), or visit our [Okta Developer Forums](https://devforum.okta.com/). 
+Please post any questions as comments on the [blog post](https://developer.okta.com/blog/2021/05/05/client-credentials-spring-security), or visit our [Okta Developer Forums](https://devforum.okta.com/).
 
 ## License
 
 Apache 2.0, see [LICENSE](LICENSE).
+
+> This is where Spring's example README ends.
+
+## Exposing your Secure Server
+
+During the development phase, webhooks are hard to test because they require a public URL.
+You can use a tool like [ngrok](https://ngrok.com/) to expose your local server to the internet.
+However, some companies have restrictions on using ngrok. If you can't use ngrok, you can deploy your server to a cloud provider like Heroku or AWS.
+
+Here are some instructions for exposing your server with ngrok:
+
+1. Install ngrok by following the instructions on their [website](https://ngrok.com/download).
+2. run `ngrok http 8081` to expose your server to the internet.
+3. Copy the `https` URL that ngrok provides and use it in the Claimxperience webhook configuration.
+
+## Configure Claimxperience's Webhook (Company Endpoint) settings
+
+In Claimxperience, you can configure a webhook to send notifications to your server.
+To do this, you need to create a new Company API and configure the webhook settings.
+
+> By this point, you should have the following:
+>
+> * The **URL of your server** (either exposed with ngrok or deployed to a cloud provider)
+> * The **client ID** and **client secret** of your Okta app
+> * The **token endpoint** of your Okta authorization server
+>   * This is usually `https://{yourOktaDomain}/oauth2/default/v1/token`
+> * The custom **scope** you added to your Okta authorization server
+> * This example uses `mod_custom`
+
+1. Log in to Claimxperience and go to the **Instance admin** page, then the **API** settings.
+2. In the Company endpoint section, fill in the following fields:
+   * **Endpoint URL**: The URL of your server
+   * **Client ID**: The client ID of your Okta app
+   * **Client Secret**: The client secret of your Okta app
+   * **Token Endpoint**: The token endpoint of your Okta authorization server
+   * **Scopes**: The custom scope(s) you added to your Okta authorization server. These are separated by spaces.
+3. Test the webhook by clicking the **Test** button. You'll see a success message if everything is configured correctly.
+   - example responses:
+     - Example 1: 
+       - Server response: Invalid Credentials
+       - Status: CANCELLED
+     - Example 2:
+       - Status code: 404
+       - Response body: `Tunnel fff2-192-74-128-125.ngrok-free.app not found`
+     - Example 3:
+       - Status code: 200
+       - Response body: `{"request":{"eventType":"TEST"},"status":"received"}`
+   - The response status and body will be what is returned by your server.
+4. Modify the events that trigger the webhook by toggling the switches in the **Events Triggers** section.
+5. Save the settings once you're done.
+

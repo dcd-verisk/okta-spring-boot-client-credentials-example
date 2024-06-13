@@ -1,5 +1,6 @@
 package com.example.client;
 
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,15 @@ public class DemoApplication implements CommandLineRunner {
 	public void scheduledRequest() {
 		webClient.get()
 			.uri("http://localhost:8081")
+			.retrieve()
+			.bodyToMono(String.class)
+			.map(string
+				-> "Schedule request response: " + string)
+			.subscribe(logger::info);
+
+		webClient.post()
+			.uri("http://localhost:8081")
+			.bodyValue(Map.of("message", "Hello, world!"))
 			.retrieve()
 			.bodyToMono(String.class)
 			.map(string
